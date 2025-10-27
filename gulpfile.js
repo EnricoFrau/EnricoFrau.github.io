@@ -8,12 +8,27 @@ var cp = require('child_process');
 var imagemin = require('gulp-imagemin');
 var browserSync = require('browser-sync');
 
+var sass = require('gulp-sass')(require('sass'));
+
+
 var jekyllCommand = (/^win/.test(process.platform)) ? 'jekyll.bat' : 'jekyll';
 
 /*
  * Build the Jekyll Site
  * runs a child process in node that runs the jekyll commands
  */
+// ...existing code...
+
+gulp.task('watch', function() {
+  gulp.watch('src/styles/**/*.scss', gulp.series(['sass', 'jekyll-rebuild']));
+  gulp.watch('src/js/**/*.js', gulp.series(['js', 'jekyll-rebuild']));
+  gulp.watch('src/fonts/**/*.{ttf,woff,woff2}', gulp.series(['fonts']));
+  gulp.watch('src/img/**/*.{jpg,png,gif,svg}', gulp.series(['imagemin']));
+  gulp.watch(['*.html', '_includes/*.html', '_layouts/*.html'], gulp.series(['jekyll-rebuild']));
+});
+// ...existing code...
+
+
 gulp.task('jekyll-build', function (done) {
 	return cp.spawn(jekyllCommand, ['build'], {stdio: 'inherit'})
 		.on('close', done);
